@@ -1,7 +1,10 @@
 import os
 from typing import Any, Dict, List
 
-import ollama
+try:
+    import ollama
+except ImportError:  # pragma: no cover - exercised via fallback behavior
+    ollama = None
 from openai import OpenAI
 
 from app.services import note_service
@@ -57,6 +60,9 @@ def _call_openai(prompt: str) -> str:
 
 
 def _call_ollama(prompt: str) -> str:
+    if ollama is None:
+        raise RuntimeError("The ollama package is not installed.")
+
     response = ollama.chat(
         model=_get_ollama_model(),
         messages=[{"role": "user", "content": prompt}],
