@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:7
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: context
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/context}
+      - MONGODB_DB=${MONGODB_DB:-context}
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '3000:3000'
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    volumes:
+      - ./frontend:/usr/src/app
+
+volumes:
+  mongo_data:
