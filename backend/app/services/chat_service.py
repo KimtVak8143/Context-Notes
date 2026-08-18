@@ -7,8 +7,6 @@ except ImportError:  # pragma: no cover - exercised via fallback behavior
     ollama = None
 from openai import OpenAI
 
-from app.services import note_service
-
 
 DEFAULT_MODEL = "llama3.2"
 DEFAULT_HOST = "http://localhost:11434"
@@ -74,6 +72,8 @@ def _call_ollama(prompt: str) -> str:
 
 def generate_reply(user_message: str, notes: List[Dict[str, Any]] | None = None) -> str:
     if notes is None:
+        from app.services import note_service
+
         notes = note_service.list_notes()
 
     prompt = build_context_prompt(user_message, notes)
