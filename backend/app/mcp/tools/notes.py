@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from app import services
+import app.services.note_service as note_service
 
 
 def _note_summary(note: Dict[str, Any]) -> Dict[str, Any]:
@@ -16,7 +16,7 @@ def _note_summary(note: Dict[str, Any]) -> Dict[str, Any]:
 
 def list_notes_tool(_: Dict[str, Any] | None = None) -> List[Dict[str, Any]]:
     """Return a concise list of the user's note metadata."""
-    notes = services.note_service.list_notes()
+    notes = note_service.list_notes()
     return [_note_summary(note) for note in notes]
 
 
@@ -26,7 +26,7 @@ def search_notes_tool(payload: Dict[str, Any] | None = None) -> List[Dict[str, A
     if not query:
         return []
 
-    results = services.note_service.search_notes(query)
+    results = note_service.search_notes(query)
     return [
         {
             "id": note.get("id"),
@@ -44,7 +44,7 @@ def get_note_tool(payload: Dict[str, Any] | None = None) -> Optional[Dict[str, A
     if not note_id:
         return None
 
-    return services.note_service.get_note(note_id)
+    return note_service.get_note(note_id)
 
 
 def create_note_tool(payload: Dict[str, Any] | None = None) -> Dict[str, Any]:
@@ -54,7 +54,7 @@ def create_note_tool(payload: Dict[str, Any] | None = None) -> Dict[str, Any]:
     if not title:
         raise ValueError("A note title is required.")
 
-    return services.note_service.create_note(
+    return note_service.create_note(
         title=title,
         content=data.get("content"),
         tags=data.get("tags", []),
@@ -68,7 +68,7 @@ def update_note_tool(payload: Dict[str, Any] | None = None) -> Optional[Dict[str
     if not note_id:
         raise ValueError("A note_id is required.")
 
-    return services.note_service.update_note(
+    return note_service.update_note(
         note_id=note_id,
         title=data.get("title"),
         content=data.get("content"),
@@ -82,5 +82,5 @@ def delete_note_tool(payload: Dict[str, Any] | None = None) -> Dict[str, Any]:
     if not note_id:
         raise ValueError("A note_id is required.")
 
-    deleted = services.note_service.delete_note(note_id)
+    deleted = note_service.delete_note(note_id)
     return {"deleted": deleted}

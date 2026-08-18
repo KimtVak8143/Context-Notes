@@ -1,11 +1,17 @@
 import os
+from types import SimpleNamespace
 from typing import Any, Dict, List
 
 try:
     import ollama
 except ImportError:  # pragma: no cover - exercised via fallback behavior
-    ollama = None
+    def _missing_ollama_chat(*_: Any, **__: Any) -> Any:
+        raise RuntimeError("The ollama package is not installed.")
+
+    ollama = SimpleNamespace(chat=_missing_ollama_chat)
 from openai import OpenAI
+
+import app.services.note_service as note_service
 
 
 DEFAULT_MODEL = "llama3.2"
@@ -58,9 +64,6 @@ def _call_openai(prompt: str) -> str:
 
 
 def _call_ollama(prompt: str) -> str:
-    if ollama is None:
-        raise RuntimeError("The ollama package is not installed.")
-
     response = ollama.chat(
         model=_get_ollama_model(),
         messages=[{"role": "user", "content": prompt}],
@@ -72,8 +75,6 @@ def _call_ollama(prompt: str) -> str:
 
 def generate_reply(user_message: str, notes: List[Dict[str, Any]] | None = None) -> str:
     if notes is None:
-        from app.services import note_service
-
         notes = note_service.list_notes()
 
     prompt = build_context_prompt(user_message, notes)
