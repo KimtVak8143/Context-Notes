@@ -11,7 +11,7 @@ except ImportError:  # pragma: no cover - exercised via fallback behavior
     ollama = SimpleNamespace(chat=_missing_ollama_chat)
 from openai import OpenAI
 
-import app.services.note_service as note_service
+from . import note_service
 
 
 DEFAULT_MODEL = "llama3.2"

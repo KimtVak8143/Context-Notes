@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-import app.services.note_service as note_service
+from ...services import note_service
 
 
 def _note_summary(note: Dict[str, Any]) -> Dict[str, Any]:
