@@ -21,7 +21,7 @@ backend-seed:
 	cd backend && python3 scripts/seed.py
 
 backend-test:
-	cd backend && pytest -q
+	cd backend && PYTHONPATH=. python3 -m pytest -q
 
 frontend-dev:
 	cd frontend && npm run dev
